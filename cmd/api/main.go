@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/JeremiahTee/GoSocial/internal/env"
+	"github.com/JeremiahTee/GoSocial/internal/store"
 	"log"
 )
 
@@ -12,6 +13,7 @@ func main() {
 
 	app := &application{
 		config: cfg,
+		store:  store.NewStorage(nil),
 	}
 
 	mux := app.mount()
