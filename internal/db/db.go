@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/JeremiahTee/GoSocial/internal/store"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func New(addr string, maxOpenConns, maxIdleConns int, maxIdleTime string) (*sql.
 	}
 	db.SetConnMaxIdleTime(duration)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), store.QueryTimeoutDuration)
 	defer cancel()
 
 	err = db.PingContext(ctx)
