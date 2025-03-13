@@ -13,6 +13,10 @@ migrate-up:
 migrate-down:
 	@migrate -path=$(MIGRATIONS_PATH) -database=$(DB_ADDR) down $(filter-out $@,$(MAKECMDGOALS))
 
+.PHONY: migrate-force
+migrate-force:
+	@migrate -path=$(MIGRATIONS_PATH) -database=$(DB_ADDR) force $(filter-out $@,$(MAKECMDGOALS))
+
 .PHONY: psql
 psql:
 	docker exec -it postgres-db psql -U admin -d social
