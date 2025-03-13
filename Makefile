@@ -16,3 +16,7 @@ migrate-down:
 .PHONY: psql
 psql:
 	docker exec -it postgres-db psql -U admin -d social
+
+.PHONY: seed
+seed:
+	go run cmd/migrate/seed/main.go
