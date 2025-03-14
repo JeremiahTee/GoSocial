@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/lib/pq"
 )
 
@@ -29,8 +30,13 @@ type PostsStore struct {
 	db *sql.DB
 }
 
-func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64) ([]PostWithMetadata, error) {
-	query := `
+func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) ([]PostWithMetadata, error) {
+	sortOrder := "DESC" // Default
+	if fq.Sort == "ASC" {
+		sortOrder = "ASC"
+	}
+
+	query := fmt.Sprintf(`
 		SELECT
 			p.id,
 			p.user_id,
@@ -42,19 +48,19 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64) ([]PostWithM
 			u.username,
 			COUNT(c.id) AS comment_count
 		FROM posts p
-				 LEFT JOIN comments c ON c.post_id = p.id
-				 JOIN users u ON p.user_id = u.id
-				 LEFT JOIN followers f ON f.follower_id = p.user_id OR p.user_id = $1
+		LEFT JOIN comments c ON c.post_id = p.id
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN followers f ON f.follower_id = p.user_id
 		WHERE f.user_id = $1 OR p.user_id = $1
-		GROUP BY
-			p.id, p.user_id, u.username
-		ORDER BY p.created_at DESC;
-    `
+		GROUP BY p.id, p.user_id, u.username
+		ORDER BY p.created_at %s
+		LIMIT $2 OFFSET $3;
+	`, sortOrder)
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, query, userID)
+	rows, err := s.db.QueryContext(ctx, query, userID, fq.Limit, fq.Offset)
 	if err != nil {
 		return nil, err
 	}
