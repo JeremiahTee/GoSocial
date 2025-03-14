@@ -31,40 +31,44 @@ type PostsStore struct {
 }
 
 func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq PaginatedFeedQuery) ([]PostWithMetadata, error) {
-	sortOrder := "DESC" // Default
-	if fq.Sort == "ASC" {
-		sortOrder = "ASC"
-	}
+	// Build the query dynamically
+	tagFilter, params := buildTagFilter(fq.Tags)
 
 	query := fmt.Sprintf(`
-		SELECT
-			p.id,
-			p.user_id,
-			p.title,
-			p.content,
-			p.created_at,
-			p.version,
+		SELECT 
+			p.id, 
+			p.user_id, 
+			p.title, 
+			p.content, 
+			p.created_at, 
+			p.version, 
 			p.tags,
 			u.username,
+			u.email,
+			u.created_at AS user_created_at,
 			COUNT(c.id) AS comment_count
 		FROM posts p
 		LEFT JOIN comments c ON c.post_id = p.id
 		JOIN users u ON p.user_id = u.id
-		LEFT JOIN followers f ON f.follower_id = p.user_id
-		WHERE f.user_id = $1 OR p.user_id = $1
-		GROUP BY p.id, p.user_id, u.username
+		JOIN followers f ON f.follower_id = p.user_id AND f.user_id = $1
+		WHERE 
+			(p.title ILIKE '%%' || $4 || '%%' OR p.content ILIKE '%%' || $4 || '%%')
+			%s
+		GROUP BY p.id, p.user_id, u.username, u.email, u.created_at, p.title, p.content, p.created_at, p.version, p.tags
 		ORDER BY p.created_at %s
 		LIMIT $2 OFFSET $3;
-	`, sortOrder)
+`, tagFilter, fq.Sort)
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, query, userID, fq.Limit, fq.Offset)
+	// Dynamically handle parameters to match the number of placeholders in the query
+	params = append([]interface{}{userID, fq.Limit, fq.Offset, fq.Search}, params...)
+
+	rows, err := s.db.QueryContext(ctx, query, params...)
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
 
 	var feed []PostWithMetadata
@@ -79,7 +83,10 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq Paginated
 			&p.Version,
 			pq.Array(&p.Tags),
 			&p.User.Username,
-			&p.CommentCount)
+			&p.User.Email,
+			&p.User.CreatedAt,
+			&p.CommentCount,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -88,6 +95,14 @@ func (s *PostsStore) GetUserFeed(ctx context.Context, userID int64, fq Paginated
 	}
 
 	return feed, nil
+}
+
+// Helper function to dynamically add tag filtering only when needed
+func buildTagFilter(tags []string) (string, []interface{}) {
+	if len(tags) == 0 {
+		return "", []interface{}{} // No filtering if no tags are provided
+	}
+	return " AND p.tags && $5", []interface{}{pq.Array(tags)}
 }
 
 func (s *PostsStore) Create(ctx context.Context, post *Post) error {
