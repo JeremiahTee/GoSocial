@@ -7,39 +7,46 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"time"
 )
 
 var usernames = []string{
 	"Rhaenyra", "Alicent", "Daemon", "Viserys", "AegonII", "Helaena", "Jacaerys", "Lucerys",
 	"Rhaenys", "Corlys", "Laenor", "Laena", "Otto", "CristonCole", "Mysaria", "LarysStrong",
 	"HarwinStrong", "JoffreyVelaryon", "Baela", "Rhaena", "Aemond", "Vhagar", "Sunfyre", "Caraxes",
-	"Syrax", "Meleys", "Dreamfyre", "Balerion", "Silverwing", "Vermithor", "AryaStark", "JonSnow",
-	"TyrionLannister", "JaimeLannister", "CerseiLannister", "RobertBaratheon", "NedStark", "BranStark",
-	"SansaStark", "RobbStark", "RickonStark", "TheonGreyjoy", "YaraGreyjoy", "JorahMormont",
-	"DaarioNaharis", "Melisandre", "BericDondarrion", "SandorClegane", "GregorClegane", "NightKing",
+	"Syrax", "Meleys", "Dreamfyre", "Balerion", "Silverwing", "Vermithor", "MaegorTheCruel",
+	"Egg", "DunkTheTall", "DarkSister", "Bloodraven", "TheMadKing", "YoungGriff", "JonConnington",
+	"Blackfyre", "DaemonBlackfyre", "QuentynMartell", "TheRedViper", "OberynMartell",
+	"NymeriaSand", "ArianneMartell", "DoranMartell", "AreoHotah", "HarrenTheBlack",
+	"TorrhenStark", "LyarraStark", "RickardStark", "BrandonStark", "HowlandReed",
 }
 
 var titles = []string{
-	"Rhaenyra’s Last Thought: 'It Should Have Been Me…'",
-	"Daemon Targaryen: 'One Last Dance with Caraxes'",
-	"Alicent Hightower: 'Was It Worth the Bloodshed?'",
-	"Aegon II: 'The Throne Feels Like a Prison'",
-	"Helaena Targaryen: 'The Rats Are Watching…'",
-	"Aemond Targaryen: 'I Should Have Killed Him Sooner'",
-	"Viserys I: 'I Dreamed of Peace, Yet Woke to War…'",
-	"Larys Strong: 'Secrets Are a Man’s True Currency'",
-	"Criston Cole: 'Honor or Regret—Which Weighs More?'",
-	"Corlys Velaryon: 'What Good Is a Fleet Without Heirs?'",
-	"Arya Stark: 'Not Today, Death…'",
-	"Jon Snow: 'Betrayed, But For What Cause?'",
-	"Cersei Lannister: 'They Will Sing of Me Forever'",
-	"Tyrion Lannister: 'A Mind Needs Books Like a Sword Needs a Whetstone'",
-	"Ned Stark: 'The Blade Was Cold, The Betrayal Colder'",
-	"Jaime Lannister: 'Is This What Redemption Feels Like?'",
-	"Theon Greyjoy: 'Am I Still Theon, Or Just Reek?'",
-	"Bran Stark: 'The Past Is Already Written…'",
-	"Melisandre: 'The Lord of Light, Was I Wrong?'",
-	"The Night King: 'A Song of Ice and Fire Ends Here…'",
+	"Fire Was My Birthright…",
+	"We Were Never Meant to Grow Old",
+	"The Price of Loyalty Is Blood",
+	"A Throne Drenched in Ash",
+	"The Rats Always Knew…",
+	"A Debt Paid in Fire and Blood",
+	"Dreams Did Not Save Me…",
+	"Whispers Weave the Fate of Kings",
+	"Honor Is a Man’s Greatest Lie",
+	"What Is Wealth Without Legacy?",
+	"Names Written in Red",
+	"A Crown Was Never Mine to Hold",
+	"Power Is Power, Until It Isn’t…",
+	"Wit Is a Blade Sharper Than Valyrian Steel",
+	"The Cold Truth of Honor",
+	"Regret Has a Golden Hand",
+	"Salt, Shame, and Shadows",
+	"The Past Is Already Written…",
+	"The Flames Lied to Me…",
+	"A Song of Ice and Silence…",
+	"Patience Is Just Another Word for Revenge",
+	"The Viper Never Forgives",
+	"Stone Burns Too…",
+	"Targaryens Bow to No One",
+	"The King Who Knelt and Regretted",
 }
 
 var contents = []string{
@@ -82,58 +89,82 @@ var contents = []string{
 	"Ice and fire clash,  \nThe world bends to silent death,  \nDarkness has no end.  // Night King",
 
 	"Cold winds howl my name,  \nI swore an oath, now I die,  \nFor what cause, I ask?  // Jon Snow",
+
+	"Eyes wide, breath is thin,  \nI see what should not be seen,  \nThe flames lied to me.  // Melisandre",
+
+	"Chains forged from my past,  \nNames I loved, names I betrayed,  \nAll whisper my fate.  // Theon Greyjoy",
+
+	"Sword raised, heart unsure,  \nTo be king or to be free,  \nOne choice, no escape.  // Robb Stark",
+
+	"A knife in the dark,  \nIt sings with a gentle touch,  \nDeath calls me forward.  // Littlefinger",
+
+	"The night is silent,  \nBut I hear them in the wind,  \nThe dead do not sleep.  // Jon Snow",
 }
 
 var tags = []string{
-	"#HouseOfTheDragon",
-	"#GameOfThrones",
-	"#FireAndBlood",
-	"#IronThrone",
-	"#Valyria",
-	"#Dracarys",
-	"#WinterIsComing",
-	"#IceAndFire",
-	"#TheDanceOfDragons",
-	"#TargaryenLegacy",
-	"#SwordAndCrown",
-	"#BetrayalAndHonor",
-	"#KingsAndQueens",
-	"#TheLastDragon",
-	"#AStormOfSwords",
-	"#DarkWingsDarkWords",
-	"#OathAndDuty",
-	"#ShadowsAndFire",
-	"#TheOldGods",
-	"#TheNightIsDark",
+	"#HouseOfTheDragon", "#GameOfThrones", "#FireAndBlood", "#IronThrone",
+	"#Valyria", "#Dracarys", "#WinterIsComing", "#IceAndFire", "#TheDanceOfDragons",
+	"#TargaryenLegacy", "#SwordAndCrown", "#BetrayalAndHonor", "#KingsAndQueens",
+	"#TheLastDragon", "#AStormOfSwords", "#DarkWingsDarkWords", "#OathAndDuty",
+	"#ShadowsAndFire", "#TheOldGods", "#TheNightIsDark", "#TrialByCombat",
+	"#ThePrinceThatWasPromised", "#NoOne", "#TheRedWedding", "#TheKingInTheNorth",
+	"#TheMadQueen", "#BloodAndCheese", "#Stormborn", "#WhatIsDeadMayNeverDie",
+	"#ThePackSurvives", "#BreakerOfChains", "#TheNightKing", "#TheLannisterDebt",
+	"#TheDragonHasThreeHeads", "#UnbowedUnbentUnbroken", "#ChaosIsALadder",
+	"#TheGoldenCompany", "#TheRainsOfCastamere", "#AllMenMustDie", "#AFeastForCrows",
 }
 
 var comments = []string{
 	"Rhaenyra’s Last Thought: ‘It should have been me…’ Yeah, and the BBQ wasn’t part of the plan either. 🔥🐉",
+
 	"Daemon’s Dance: No thoughts, just vibes… until gravity kicked in. 🚀💀",
+
 	"Aegon II’s Crown: Heavy is the head that wears a stolen throne. 👑",
+
 	"Helaena’s Whispers: Ma’am, if the rats are whispering to you, it’s time to log out. 🐀📢",
+
 	"Aemond’s Regret: Maybe don’t start beef with your nephew next time? 👀",
+
 	"Viserys I’s Dream: Should’ve spent less time dreaming, more time parenting. 😬",
+
 	"Larys Strong’s Secrets: We know what your true interest is... Quentin Tarantino style 💅️",
+
 	"Criston Cole’s Honor: Sir Simpington of the Kingsguard strikes again. ⚔️",
+
 	"Corlys Velaryon’s Legacy: Richest man in Westeros, still no peace. Oof. 🏴‍☠️",
+
 	"Arya’s Shadows: Death was all set, and Arya said ‘New phone, who dis?’ ☠️📞",
+
 	"Ned Stark’s Justice: Headstrong? More like just gone. ⚔️🥶",
+
 	"Theon’s Identity Crisis: Prince? Reek? Hero? Bro has had more rebrands than Twitter. 🌀🐺",
+
 	"Jaime’s Redemption: Years of growth, threw it out for his sister. Peak Lannister. 🚮",
+
 	"Cersei’s Fall: ‘They will sing of me forever’—yeah, as a meme. 🏰💥",
+
 	"Tyrion’s Chains: Outdrank, outwitted, outlived… barely. 🍷💀",
+
 	"Robert’s Reflection: Ate himself into irrelevance. Kingship speedrun any% 🍗👑",
+
 	"Melisandre’s Fire: ‘The Lord of Light has a plan’—and it involves *you* taking a massive L. 🔥🤡",
+
 	"Bran’s Time Travel: Biggest plot hole... deux ex machina killed GoT's final season. 🦅",
+
 	"Night King’s End: 8,000 years of prep, undone by a knife toss. Tough. ❄️🗡️",
+
 	"Jon’s Oath: Stabbed, exiled, got zero thanks. Westeros’ worst work contract. 📜🔪",
+
+	"Littlefinger’s Last Words: ‘Chaos is a ladder’\n\nTurns out ladders don’t work when your throat’s cut. 🔪💀",
+
+	"Robb’s War Plan: ‘I got this.’\n\nYeah, so did the Freys. 🩸🔪",
 }
 
 func Seed(store store.Storage) {
 	ctx := context.Background()
+	rand.Seed(time.Now().UnixNano())
 
-	users := generateUsers(50)
+	users := generateUsers(20) // Reduced to 20 for multiple posts per user
 	for _, user := range users {
 		if err := store.Users.Create(ctx, user); err != nil {
 			log.Println("Error creating user", user, err)
@@ -141,7 +172,7 @@ func Seed(store store.Storage) {
 		}
 	}
 
-	posts := generatePosts(20, users)
+	posts := generatePosts(50, users) // Each user gets ~2-3 posts
 	for _, post := range posts {
 		if err := store.Posts.Create(ctx, post); err != nil {
 			log.Println("Error creating post", post, err)
@@ -149,15 +180,15 @@ func Seed(store store.Storage) {
 		}
 	}
 
-	comments := generateComments(20, users, posts)
-	for _, comments := range comments {
-		if err := store.Comments.Create(ctx, comments); err != nil {
-			log.Println("Error creating comments", err)
+	comments := generateComments(100, users, posts) // Each post gets ~2-3 comments
+	for _, comment := range comments {
+		if err := store.Comments.Create(ctx, comment); err != nil {
+			log.Println("Error creating comment", comment, err)
 			return
 		}
 	}
 
-	log.Println("Seeding complete")
+	log.Println("Seeding complete!")
 }
 
 func generateUsers(count int) []*store.User {
@@ -178,24 +209,32 @@ func generatePosts(count int, users []*store.User) []*store.Post {
 		user := users[rand.Intn(len(users))]
 		posts[i] = &store.Post{
 			UserID:  user.ID,
-			Title:   titles[i],
-			Content: contents[i],
+			Title:   titles[rand.Intn(len(titles))],
+			Content: contents[rand.Intn(len(contents))],
 			Tags: []string{
-				tags[i],
+				tags[rand.Intn(len(tags))],
 			},
 		}
 	}
-
 	return posts
 }
 
 func generateComments(count int, users []*store.User, posts []*store.Post) []*store.Comment {
 	cmts := make([]*store.Comment, count)
+
 	for i := 0; i < count; i++ {
+		post := posts[rand.Intn(len(posts))]
+		user := users[rand.Intn(len(users))]
+
+		// Prevent the post author from commenting on their own post
+		for user.ID == post.UserID {
+			user = users[rand.Intn(len(users))]
+		}
+
 		cmts[i] = &store.Comment{
-			PostID:  posts[i].ID,
-			UserID:  users[i].ID,
-			Content: comments[i],
+			PostID:  post.ID,
+			UserID:  user.ID,
+			Content: comments[rand.Intn(len(comments))],
 		}
 	}
 	return cmts
