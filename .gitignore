@@ -26,3 +26,6 @@ go.work.sum
 .envrc
 .log
 /bin/*
+
+# IDE
+.idea/
