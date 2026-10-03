@@ -25,7 +25,7 @@ Go 1.23 · chi · PostgreSQL 16 · golang-migrate · swaggo · zap · air
     internal/db      connection pool and seed data
     docs             generated Swagger spec
 
-## Status
+## About
 
-A learning project. Registration is in place; token authentication and
-email invitations are in progress.
+Built in March 2025 while working through backend API design in Go.
+It is a snapshot of that work and is not under active development.
